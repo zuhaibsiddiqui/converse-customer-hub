@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 interface Conversation {
@@ -247,16 +249,29 @@ export const LiveDataPanels = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             Recent Conversations
-            <Badge variant="secondary" className="text-xs">
-              {conversations.length} active
-            </Badge>
+            <div className="flex items-center space-x-2">
+              <Badge variant="secondary" className="text-xs">
+                {conversations.length} active
+              </Badge>
+              <Link to="/conversations">
+                <Button variant="outline" size="sm">
+                  View All
+                </Button>
+              </Link>
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <div className="max-h-96 overflow-y-auto">
             {conversations.length > 0 ? (
               conversations.map((conversation) => (
-                <ConversationItem key={conversation.id} conversation={conversation} />
+                <Link 
+                  key={conversation.id} 
+                  to="/conversations" 
+                  className="block hover:no-underline"
+                >
+                  <ConversationItem conversation={conversation} />
+                </Link>
               ))
             ) : (
               <div className="p-6 text-center text-muted-foreground">
