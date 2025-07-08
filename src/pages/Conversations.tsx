@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { ConversationsList } from "@/components/conversations/ConversationsList";
 import { ChatPanel } from "@/components/conversations/ChatPanel";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
 
 
 
@@ -28,6 +30,8 @@ const Conversations = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [messagesLoading, setMessagesLoading] = useState(false);
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchCustomers = async () => {
     try {
@@ -79,6 +83,24 @@ const Conversations = () => {
     fetchMessages(customer.phone_number);
   };
 
+  const handleManualRefresh = async () => {
+    setRefreshing(true);
+    await fetchCustomers();
+    if (selectedCustomer) {
+      await fetchMessages(selectedCustomer.phone_number);
+    }
+    setLastRefresh(new Date());
+    setRefreshing(false);
+  };
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("en-IE", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
   useEffect(() => {
     fetchCustomers();
 
@@ -88,6 +110,7 @@ const Conversations = () => {
       if (selectedCustomer) {
         fetchMessages(selectedCustomer.phone_number);
       }
+      setLastRefresh(new Date());
     }, 2 * 60 * 1000);
 
     return () => {
@@ -106,9 +129,29 @@ const Conversations = () => {
               <p className="text-muted-foreground">WhatsApp Business Messages</p>
             </div>
             
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-sm text-muted-foreground">Live</span>
+            <div className="flex items-center space-x-6">
+              {/* Last Refresh Time */}
+              <div className="text-sm text-muted-foreground">
+                Last refresh: {formatTime(lastRefresh)}
+              </div>
+
+              {/* Manual Refresh Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleManualRefresh}
+                disabled={refreshing}
+                className="flex items-center space-x-2"
+              >
+                <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+                <span>Refresh</span>
+              </Button>
+
+              {/* Live Status */}
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-muted-foreground">Live</span>
+              </div>
             </div>
           </div>
         </div>
