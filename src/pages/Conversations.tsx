@@ -5,6 +5,25 @@ import { ConversationsList } from "@/components/conversations/ConversationsList"
 import { ChatPanel } from "@/components/conversations/ChatPanel";
 import { Card } from "@/components/ui/card";
 
+export const DashboardHeader = () => {
+  const [lastRefresh, setLastRefresh] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastRefresh(new Date());
+    }, 30000); // Update every 30 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString("en-IE", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
 export interface Customer {
   phone_number: string;
   name: string | null;
