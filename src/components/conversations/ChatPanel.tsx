@@ -182,7 +182,7 @@ export const ChatPanel = ({ customer, messages, loading, onSendMessage }: ChatPa
       </div>
 
       {/* Message Input */}
-      <div className="p-4 border-t border-border bg-card">
+      {/* <div className="p-4 border-t border-border bg-card">
         <Card>
           <CardContent className="p-4">
             <div className="flex space-x-2">
@@ -213,12 +213,12 @@ export const ChatPanel = ({ customer, messages, loading, onSendMessage }: ChatPa
                 </svg>
               </Button>
             </div>
-{/*              <p className="text-xs text-muted-foreground mt-2">
+             <p className="text-xs text-muted-foreground mt-2">
               Press Enter to send • Shift + Enter for new line
-            </p> */}
+            </p> 
           </CardContent>
         </Card>
-      </div>
+      </div>*/}
     </div>
   );
 };
