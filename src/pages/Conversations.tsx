@@ -102,6 +102,9 @@ const Conversations = () => {
               <h1 className="text-2xl font-bold text-foreground">Conversations</h1>
               <p className="text-muted-foreground">WhatsApp Business Messages</p>
             </div>
+            <div className="text-sm text-muted-foreground">
+              Last refresh: {formatTime(lastRefresh)}
+            </div>
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-muted-foreground">Live</span>
