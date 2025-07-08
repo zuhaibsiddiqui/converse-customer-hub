@@ -123,23 +123,11 @@ export const LiveDataPanels = () => {
   useEffect(() => {
     fetchLiveData();
 
-    // Set up real-time subscriptions
-    const channel = supabase
-      .channel("live-data-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "customer_leads" },
-        () => fetchLiveData()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "follow_ups" },
-        () => fetchLiveData()
-      )
-      .subscribe();
+    // Set up auto-refresh every 2 minutes
+    const interval = setInterval(fetchLiveData, 2 * 60 * 1000);
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, []);
 

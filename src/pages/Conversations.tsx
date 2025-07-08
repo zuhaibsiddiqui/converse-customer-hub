@@ -47,18 +47,21 @@ const Conversations = () => {
     setMessagesLoading(true);
     try {
       const { data: messageData } = await supabase
-        .from("conversation_messages")
+        .from("n8n_chat_histories")
         .select("*")
-        .eq("customer_phone", customerPhone)
-        .order("sent_time", { ascending: true });
+        .eq("session_id", customerPhone)
+        .order("id", { ascending: true });
 
       if (messageData) {
-        const formattedMessages: Message[] = messageData.map((msg) => ({
-          id: msg.id,
-          sender: msg.sender === "human" ? "customer" : "bot",
-          message_text: msg.message_text,
-          sent_time: msg.sent_time || new Date().toISOString(),
-        }));
+        const formattedMessages: Message[] = messageData.map((msg) => {
+          const message = msg.message as any; // Type assertion for JSON structure
+          return {
+            id: msg.id.toString(),
+            sender: message?.type === "human" ? "customer" : "bot",
+            message_text: message?.content || "",
+            sent_time: new Date().toISOString(), // n8n_chat_histories doesn't have timestamp
+          };
+        });
         setMessages(formattedMessages);
       }
     } catch (error) {
@@ -76,30 +79,16 @@ const Conversations = () => {
   useEffect(() => {
     fetchCustomers();
 
-    // Set up real-time subscription for new messages
-    const channel = supabase
-      .channel("conversation-updates")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "conversation_messages" },
-        (payload) => {
-          if (selectedCustomer && payload.new.customer_phone === selectedCustomer.phone_number) {
-            const newMessage: Message = {
-              id: payload.new.id,
-              sender: payload.new.sender === "human" ? "customer" : "bot",
-              message_text: payload.new.message_text,
-              sent_time: payload.new.sent_time || new Date().toISOString(),
-            };
-            setMessages((prev) => [...prev, newMessage]);
-          }
-          // Refresh customer list to update last message time
-          fetchCustomers();
-        }
-      )
-      .subscribe();
+    // Set up auto-refresh every 2 minutes
+    const interval = setInterval(() => {
+      fetchCustomers();
+      if (selectedCustomer) {
+        fetchMessages(selectedCustomer.phone_number);
+      }
+    }, 2 * 60 * 1000);
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, [selectedCustomer]);
 

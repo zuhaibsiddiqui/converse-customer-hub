@@ -144,30 +144,6 @@ export type Database = {
           },
         ]
       }
-      conversation_messages: {
-        Row: {
-          customer_phone: string
-          id: string
-          message_text: string
-          sender: string
-          sent_time: string | null
-        }
-        Insert: {
-          customer_phone: string
-          id?: string
-          message_text: string
-          sender: string
-          sent_time?: string | null
-        }
-        Update: {
-          customer_phone?: string
-          id?: string
-          message_text?: string
-          sender?: string
-          sent_time?: string | null
-        }
-        Relationships: []
-      }
       customer_leads: {
         Row: {
           angry_behaviour_detected: boolean | null

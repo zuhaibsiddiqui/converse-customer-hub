@@ -63,23 +63,11 @@ const Dashboard = () => {
   useEffect(() => {
     fetchDashboardStats();
 
-    // Set up real-time subscriptions
-    const channel = supabase
-      .channel("dashboard-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "customer_leads" },
-        () => fetchDashboardStats()
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "follow_ups" },
-        () => fetchDashboardStats()
-      )
-      .subscribe();
+    // Set up auto-refresh every 2 minutes
+    const interval = setInterval(fetchDashboardStats, 2 * 60 * 1000);
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(interval);
     };
   }, []);
 
