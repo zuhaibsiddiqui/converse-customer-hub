@@ -5,24 +5,7 @@ import { ConversationsList } from "@/components/conversations/ConversationsList"
 import { ChatPanel } from "@/components/conversations/ChatPanel";
 import { Card } from "@/components/ui/card";
 
-export const DashboardHeader = () => {
-  const [lastRefresh, setLastRefresh] = useState(new Date());
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLastRefresh(new Date());
-    }, 30000); // Update every 30 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-IE", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
 
 export interface Customer {
   phone_number: string;
@@ -122,9 +105,7 @@ const Conversations = () => {
               <h1 className="text-2xl font-bold text-foreground">Conversations</h1>
               <p className="text-muted-foreground">WhatsApp Business Messages</p>
             </div>
-            <div className="text-sm text-muted-foreground">
-              Last refresh: {formatTime(lastRefresh)}
-            </div>
+            
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <span className="text-sm text-muted-foreground">Live</span>
