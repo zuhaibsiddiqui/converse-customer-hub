@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { ConversationsList } from "@/components/conversations/ConversationsList";
 import { ChatPanel } from "@/components/conversations/ChatPanel";
