@@ -20,11 +20,18 @@ export const ConversationsList = ({
 }: ConversationsListProps) => {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
-      customer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone_number.includes(searchTerm)
-  );
+  const filteredCustomers = customers
+    .filter(
+      (customer) =>
+        customer.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        customer.phone_number.includes(searchTerm)
+    )
+    .sort((a, b) => {
+      // Sort by most recent message time first (newest at top)
+      const timeA = a.last_message_time ? new Date(a.last_message_time).getTime() : 0;
+      const timeB = b.last_message_time ? new Date(b.last_message_time).getTime() : 0;
+      return timeB - timeA;
+    });
 
   const getTimeAgo = (dateString: string | null) => {
     if (!dateString) return "No messages";
@@ -53,26 +60,26 @@ export const ConversationsList = ({
 
   const CustomerItem = ({ customer }: { customer: Customer }) => (
     <div
-      className={`p-4 cursor-pointer transition-colors border-b border-border hover:bg-muted/50 ${
+      className={`p-3 sm:p-4 cursor-pointer transition-colors border-b border-border hover:bg-muted/50 ${
         selectedCustomer?.phone_number === customer.phone_number
           ? "bg-muted border-r-2 border-r-primary"
           : ""
       }`}
       onClick={() => onCustomerSelect(customer)}
     >
-      <div className="flex items-start space-x-3">
+      <div className="flex items-start space-x-2 sm:space-x-3">
         {/* Avatar */}
-        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-semibold flex-shrink-0 text-sm sm:text-base">
           {customer.name?.charAt(0) || customer.phone_number.slice(-2)}
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h3 className="text-sm font-medium text-foreground truncate">
+            <h3 className="text-sm sm:text-base font-medium text-foreground truncate">
               {customer.name || `Customer ${customer.phone_number.slice(-4)}`}
             </h3>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
               {getTimeAgo(customer.last_message_time)}
             </span>
           </div>
@@ -86,7 +93,7 @@ export const ConversationsList = ({
               {customer.current_stage.replace(/_/g, " ")}
             </Badge>
             {customer.unread_count && customer.unread_count > 0 && (
-              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+              <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0">
                 <span className="text-xs text-white font-medium">
                   {customer.unread_count}
                 </span>
@@ -128,20 +135,20 @@ export const ConversationsList = ({
   return (
     <div className="h-full flex flex-col">
       {/* Search Bar */}
-      <div className="p-4 border-b border-border">
+      <div className="p-3 sm:p-4 border-b border-border">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Search conversations..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 text-sm sm:text-base"
           />
         </div>
       </div>
 
       {/* Header */}
-      <div className="p-4 border-b border-border bg-muted/30">
+      <div className="p-3 sm:p-4 border-b border-border bg-muted/30">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-foreground">
             Messages ({filteredCustomers.length})
@@ -156,7 +163,7 @@ export const ConversationsList = ({
             <CustomerItem key={customer.phone_number} customer={customer} />
           ))
         ) : (
-          <div className="p-8 text-center text-muted-foreground">
+          <div className="p-6 sm:p-8 text-center text-muted-foreground text-sm sm:text-base">
             {searchTerm ? "No conversations found" : "No conversations yet"}
           </div>
         )}
