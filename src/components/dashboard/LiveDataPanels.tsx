@@ -30,13 +30,14 @@ export const LiveDataPanels = () => {
   const [loading, setLoading] = useState(true);
 
   const getTimeAgo = (date: Date) => {
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return "Just now";
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return `${Math.floor(diffInMinutes / 1440)}d ago`;
+    return date.toLocaleString("en-IE", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false
+    });
   };
 
   const getTimeRemaining = (scheduledTime: string) => {
@@ -141,7 +142,7 @@ export const LiveDataPanels = () => {
           <p className="text-sm font-medium text-foreground truncate">
             {conversation.customer_name}
           </p>
-          <span className="text-xs text-muted-foreground">{conversation.time_ago}</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">{conversation.time_ago}</span>
         </div>
         <p className="text-sm text-muted-foreground truncate">{conversation.last_message}</p>
         <div className="flex items-center space-x-2 mt-1">
@@ -184,7 +185,7 @@ export const LiveDataPanels = () => {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6">
         <Card>
           <CardHeader>
             <div className="h-6 w-48 bg-muted animate-pulse rounded"></div>
@@ -203,35 +204,12 @@ export const LiveDataPanels = () => {
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <div className="h-6 w-48 bg-muted animate-pulse rounded"></div>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {[...Array(5)].map((_, i) => (
-                <div key={i} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-muted animate-pulse rounded-full"></div>
-                    <div className="space-y-2">
-                      <div className="h-4 w-24 bg-muted animate-pulse rounded"></div>
-                      <div className="h-3 w-32 bg-muted animate-pulse rounded"></div>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-4 w-16 bg-muted animate-pulse rounded"></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 gap-6">
       {/* Recent Conversations */}
       <Card>
         <CardHeader>
@@ -264,31 +242,6 @@ export const LiveDataPanels = () => {
             ) : (
               <div className="p-6 text-center text-muted-foreground">
                 No recent conversations
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Follow-up Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            Upcoming Follow-ups
-            <Badge variant="secondary" className="text-xs">
-              {followUps.length} pending
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="max-h-96 overflow-y-auto">
-            {followUps.length > 0 ? (
-              followUps.map((followUp) => (
-                <FollowUpItem key={followUp.id} followUp={followUp} />
-              ))
-            ) : (
-              <div className="p-6 text-center text-muted-foreground">
-                No pending follow-ups
               </div>
             )}
           </div>
