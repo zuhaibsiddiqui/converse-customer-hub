@@ -149,7 +149,7 @@ export const ChartSection = () => {
         <CardHeader>
           <CardTitle>7-Day Activity Trends</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent width="100%">
           <ChartContainer config={chartConfig} className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={activityData}>
