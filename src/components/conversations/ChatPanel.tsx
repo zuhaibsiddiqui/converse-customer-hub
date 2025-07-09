@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Customer, Message } from "@/pages/Conversations";
+import { CustomerDetailsModal } from "./CustomerDetailsModal";
 
 interface ChatPanelProps {
   customer: Customer | null;
@@ -15,6 +16,7 @@ interface ChatPanelProps {
 
 export const ChatPanel = ({ customer, messages, loading, onSendMessage }: ChatPanelProps) => {
   const [newMessage, setNewMessage] = useState("");
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -125,10 +127,20 @@ export const ChatPanel = ({ customer, messages, loading, onSendMessage }: ChatPa
             {customer.name?.charAt(0) || customer.phone_number.slice(-2)}
           </div>
           <div className="flex-1">
-            <h3 className="font-medium text-foreground">
-              {customer.name || `Customer ${customer.phone_number.slice(-4)}`}
-            </h3>
             <div className="flex items-center space-x-2">
+              <h3 className="font-medium text-foreground">
+                {customer.name || `Customer ${customer.phone_number.slice(-4)}`}
+              </h3>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowDetailsModal(true)}
+                className="text-xs"
+              >
+                View Details
+              </Button>
+            </div>
+            <div className="flex items-center space-x-2 mt-1">
               <p className="text-sm text-muted-foreground">{customer.phone_number}</p>
               <Badge variant="secondary" className="text-xs">
                 {customer.current_stage.replace(/_/g, " ")}
@@ -219,6 +231,13 @@ export const ChatPanel = ({ customer, messages, loading, onSendMessage }: ChatPa
           </CardContent>
         </Card>
       </div>*/}
+      
+      {/* Customer Details Modal */}
+      <CustomerDetailsModal
+        customer={customer}
+        isOpen={showDetailsModal}
+        onClose={() => setShowDetailsModal(false)}
+      />
     </div>
   );
 };
